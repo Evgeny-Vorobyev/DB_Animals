@@ -1,0 +1,72 @@
+CREATE DATABASE IF NOT EXISTS Друзья_человека;
+USE Друзья_человека;
+
+CREATE TABLE Животные (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    имя VARCHAR(50),
+    команда VARCHAR(100),
+    дата_рождения DATE
+);
+
+CREATE TABLE Домашние (
+    id INT PRIMARY KEY,
+    FOREIGN KEY (id) REFERENCES Животные(id)
+);
+
+CREATE TABLE Вьючные (
+    id INT PRIMARY KEY,
+    FOREIGN KEY (id) REFERENCES Животные(id)
+);
+
+CREATE TABLE Собаки (
+    id INT PRIMARY KEY,
+    FOREIGN KEY (id) REFERENCES Домашние(id)
+);
+
+CREATE TABLE Кошки (
+    id INT PRIMARY KEY,
+    FOREIGN KEY (id) REFERENCES Домашние(id)
+);
+
+CREATE TABLE Хомяки (
+    id INT PRIMARY KEY,
+    FOREIGN KEY (id) REFERENCES Домашние(id)
+);
+
+CREATE TABLE Лошади_и_Ослы (
+    id INT PRIMARY KEY,
+    FOREIGN KEY (id) REFERENCES Вьючные(id)
+);
+
+INSERT INTO Собаки (id, имя, команда, дата_рождения) VALUES
+(1, 'Рекс', 'Сидеть', '2018-05-15'),
+(2, 'Белла', 'Лежать', '2019-02-20');
+
+INSERT INTO Кошки (id, имя, команда, дата_рождения) VALUES
+(3, 'Мурка', 'Мурлыкать', '2017-11-10'),
+(4, 'Васька', 'Гулять', '2020-07-25');
+
+INSERT INTO Хомяки (id, имя, команда, дата_рождения) VALUES
+(5, 'Харитон', 'Крутить колесо', '2019-08-30'),
+(6, 'Марсик', 'Есть семечки', '2021-01-05');
+
+INSERT INTO Лошади_и_Ослы (id, имя, команда, дата_рождения) VALUES
+(7, 'Буран', 'Прыгать', '2015-06-20'),
+(8, 'Жемчужина', 'Бегать', '2016-09-12'),
+(9, 'Серый', 'Тащить грузы', '2019-10-10'),
+(10, 'Буян', 'Пасти', '2020-03-15');
+
+DELETE FROM Лошади_и_Ослы WHERE id IN (9, 10);
+
+CREATE TABLE Лошади_и_Ослы_объединенные AS
+SELECT * FROM Лошади_и_Ослы;
+
+CREATE TABLE молодые_животные AS
+SELECT id, имя, команда, дата_рождения
+FROM Животные
+WHERE дата_рождения BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 3 YEAR) AND DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR);
+
+CREATE TABLE Общие_животные AS
+SELECT id, имя, команда, дата_рождения, 'Домашние' AS тип FROM Домашние
+UNION ALL
+SELECT id, имя, команда, дата_рождения, 'Вьючные' AS тип FROM Лошади_и_Ослы_объединенные;
